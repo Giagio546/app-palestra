@@ -1,0 +1,37 @@
+version: '3'
+services:
+  frontend:
+    build:
+      context: ./app-palestra-fe  # Percorso locale del frontend
+      dockerfile: Dockerfile       # Nome del Dockerfile per il frontend
+    ports:
+      - "4200:4200"               # Porta su cui esporre il frontend
+    networks:
+      - mynetwork
+
+  backend:
+    build:
+      context: ./app-palestra-be   # Percorso locale del backend
+      dockerfile: Dockerfile       # Nome del Dockerfile per il backend
+    ports:
+      - "5001:5001"               # Porta su cui esporre il backend
+    depends_on:
+      - mongodb                   # Dipende dal servizio MongoDB
+    networks:
+      - mynetwork
+
+  mongodb:
+    image: mongo:latest           # Usa l'immagine ufficiale di MongoDB
+    ports:
+      - "27018:27017"             # Porta predefinita di MongoDB
+    volumes:
+      - mongodb_data:/data/db     # Usa un volume per persistere i dati di MongoDB
+    networks:
+      - mynetwork
+
+volumes:
+  mongodb_data:                    # Definizione del volume MongoDB
+
+networks:
+  mynetwork:
+    driver: bridge
